@@ -50,8 +50,8 @@ class Inline : public QObject {
         auto *root = dock->widget();
         auto *layout = root->findChild<QHBoxLayout *>("replayBufferLayout");
         auto *button = root->findChild<QPushButton *>("replayBufferButton");
-        auto *save = root->findChild<QPushButton *>("saveReplayButton");
-        if (!layout || !button || !save) return;
+        auto *saveReplay = root->findChild<QPushButton *>("saveReplayButton");
+        if (!layout || !button || !saveReplay) return;
         auto *widget = new QWidget(root);
         widget->setObjectName("replayDurationInline");
         // Keep the seconds input compact; distribute ALL spare width to the replay button.
@@ -76,11 +76,11 @@ class Inline : public QObject {
         // The native saveReplayButton is initially hidden and becomes visible
         // while buffering. Its own size should never consume the spare width.
         originalReplayPolicy = button->sizePolicy();
-        originalSavePolicy = save->sizePolicy();
+        originalSavePolicy = saveReplay->sizePolicy();
         originalReplayStretch = layout->stretch(0);
         originalSaveStretch = layout->stretch(1);
         button->setSizePolicy(QSizePolicy::Expanding, originalReplayPolicy.verticalPolicy());
-        save->setSizePolicy(QSizePolicy::Fixed, originalSavePolicy.verticalPolicy());
+        saveReplay->setSizePolicy(QSizePolicy::Fixed, originalSavePolicy.verticalPolicy());
         layout->insertWidget(1, widget);
         layout->setStretch(0, 1);
         layout->setStretch(1, 0);
@@ -89,7 +89,7 @@ class Inline : public QObject {
         holder = widget;
         field = edit;
         replayButton = button;
-        saveButton = save;
+        saveButton = saveReplay;
         row = layout;
         connect(edit, &QLineEdit::editingFinished, this, [this] { save(); });
         blog(LOG_INFO, "[replay-duration-inline] Attached duration field");
