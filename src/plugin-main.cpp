@@ -10,6 +10,7 @@
 #include <QPointer>
 #include <QPushButton>
 #include <QSignalBlocker>
+#include <QSizePolicy>
 #include <QTimer>
 #include <QWidget>
 #include <algorithm>
@@ -23,7 +24,12 @@ class Inline : public QObject {
     QPointer<QWidget> holder;
     QPointer<QLineEdit> field;
     QPointer<QPushButton> replayButton;
+    QPointer<QPushButton> saveButton;
     QPointer<QHBoxLayout> row;
+    QSizePolicy originalReplayPolicy;
+    QSizePolicy originalSavePolicy;
+    int originalReplayStretch = 0;
+    int originalSaveStretch = 0;
     bool transitioning = false;
     static config_t *config() { return obs_frontend_get_profile_config(); }
     static const char *section(config_t *cfg) {
@@ -44,9 +50,12 @@ class Inline : public QObject {
         auto *root = dock->widget();
         auto *layout = root->findChild<QHBoxLayout *>("replayBufferLayout");
         auto *button = root->findChild<QPushButton *>("replayBufferButton");
-        if (!layout || !button) return;
+        auto *save = root->findChild<QPushButton *>("saveReplayButton");
+        if (!layout || !button || !save) return;
         auto *widget = new QWidget(root);
         widget->setObjectName("replayDurationInline");
+        // Keep the seconds input compact; distribute ALL spare width to the replay button.
+        widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         auto *line = new QHBoxLayout(widget);
         line->setContentsMargins(0, 0, 0, 0);
         line->setSpacing(2);
@@ -62,10 +71,25 @@ class Inline : public QObject {
         edit->setText(QString::number(seconds()));
         line->addWidget(edit);
         line->addWidget(new QLabel("s", widget));
+
+        // OBS controls: [replay button (expanding)] [seconds] [save replay (fixed)].
+        // The native saveReplayButton is initially hidden and becomes visible
+        // while buffering. Its own size should never consume the spare width.
+        originalReplayPolicy = button->sizePolicy();
+        originalSavePolicy = save->sizePolicy();
+        originalReplayStretch = layout->stretch(0);
+        originalSaveStretch = layout->stretch(1);
+        button->setSizePolicy(QSizePolicy::Expanding, originalReplayPolicy.verticalPolicy());
+        save->setSizePolicy(QSizePolicy::Fixed, originalSavePolicy.verticalPolicy());
         layout->insertWidget(1, widget);
+        layout->setStretch(0, 1);
+        layout->setStretch(1, 0);
+        layout->setStretch(2, 0);
+
         holder = widget;
         field = edit;
         replayButton = button;
+        saveButton = save;
         row = layout;
         connect(edit, &QLineEdit::editingFinished, this, [this] { save(); });
         blog(LOG_INFO, "[replay-duration-inline] Attached duration field");
@@ -116,9 +140,15 @@ class Inline : public QObject {
         if (!holder) return;
         auto *widget = holder.data();
         holder.clear(); field.clear();
-        if (row) row->removeWidget(widget);
+        if (row) {
+            row->removeWidget(widget);
+            row->setStretch(0, originalReplayStretch);
+            row->setStretch(1, originalSaveStretch);
+        }
+        if (replayButton) replayButton->setSizePolicy(originalReplayPolicy);
+        if (saveButton) saveButton->setSizePolicy(originalSavePolicy);
         delete widget;
-        row.clear(); replayButton.clear();
+        row.clear(); replayButton.clear(); saveButton.clear();
     }
 public:
     Inline() {

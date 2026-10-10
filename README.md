@@ -5,14 +5,15 @@
 **Change the maximum replay-buffer duration right next to the original OBS Replay Buffer button.**
 
 ```text
-[ Start Replay Buffer ][180]s
+Buffer stopped: [ Start Replay Buffer (fills remaining width) ][180]s
+Buffer active:  [ Stop Replay Buffer  (fills remaining width) ][180]s [Save ↧]
 ```
 
 The suffix `s` is fixed text. Only the numeric field is editable. No separate dock is needed.
 
 ## Install
 
-1. Download the **v0.1.0-beta.2** ZIP from [Releases](https://github.com/dmbai009/obs-replay-duration-inline/releases).
+1. Download the **v0.1.0-beta.3** ZIP from [Releases](https://github.com/dmbai009/obs-replay-duration-inline/releases).
 2. Exit OBS Studio completely.
 3. Unzip the `obs-plugins` folder into your OBS Studio installation, usually `C:\Program Files\obs-studio\`.
 4. Check that the DLL is at `C:\Program Files\obs-studio\obs-plugins\64bit\obs-replay-duration-inline.dll`.
@@ -21,7 +22,7 @@ The suffix `s` is fixed text. Only the numeric field is editable. No separate do
 To uninstall, close OBS and remove only this DLL.
 
 > [!WARNING]
-> Experimental beta for OBS Studio **31.x Windows x64**. Compiled using OBS 31.0.2 development headers and **not yet verified on OBS 31.0.2**. Back up your profile before testing.
+> Experimental beta for OBS Studio **31.x Windows x64**. Built against OBS 31.0.2; beta.2 was reported to load and display the numeric field on OBS 31.0.2. beta.3 layout requires testing. Back up your profile before testing.
 
 ## Behavior
 
@@ -31,6 +32,7 @@ To uninstall, close OBS and remove only this DLL.
 - Disables input during replay buffer start, active buffering and stop.
 - Tracks OBS profile and setting changes.
 - The suffix `s` is outside the editable field.
+- Native Replay Buffer button expands to fill the entire row; the native Save Replay button appears alongside the field while active.
 - OBS memory caps can cause saved clips to be shorter than the configured time.
 
 ## Build
@@ -48,3 +50,7 @@ MIT, see [LICENSE](LICENSE).
 ### v0.1.0-beta.2
 
 Rebuilt with the **exact OBS 31.0.2 build dependencies** (including Qt) after OBS logs reported `obs-replay-duration-inline.dll not loaded` for beta.1. This is a loader compatibility fix; actual runtime still needs user testing.
+
+### v0.1.0-beta.3
+
+The native Replay Buffer button now stretches to occupy unused horizontal space; the compact `[180]s` input stays beside it. When recording to the replay buffer, the native Save Replay button appears at the right, without a large gap. The original button sizing policies are restored when the plugin unloads.

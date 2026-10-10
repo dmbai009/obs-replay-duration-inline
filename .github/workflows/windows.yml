@@ -44,20 +44,20 @@ jobs:
           New-Item -ItemType Directory -Force dist/obs-plugins/64bit | Out-Null
           Copy-Item $dll dist/obs-plugins/64bit/obs-replay-duration-inline.dll
           Copy-Item LICENSE dist/LICENSE.txt
-          Compress-Archive -Path dist/* -DestinationPath obs-replay-duration-inline-v0.1.0-beta.2-windows-x64.zip -Force
+          Compress-Archive -Path dist/* -DestinationPath obs-replay-duration-inline-v0.1.0-beta.3-windows-x64.zip -Force
       - uses: actions/upload-artifact@v4
         with:
           name: obs-replay-duration-inline-windows-x64
-          path: obs-replay-duration-inline-v0.1.0-beta.2-windows-x64.zip
+          path: obs-replay-duration-inline-v0.1.0-beta.3-windows-x64.zip
           if-no-files-found: error
       - name: Publish beta
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v0.1.0-beta.2
+          tag_name: v0.1.0-beta.3
           target_commitish: main
-          name: OBS Replay Duration Inline v0.1.0-beta.2
+          name: OBS Replay Duration Inline v0.1.0-beta.3
           prerelease: true
           make_latest: false
-          body: Rebuilt for OBS 31.0.2 / Qt 6.6.3; fixes DLL dependency mismatch. Experimental; test before using on streams.
-          files: obs-replay-duration-inline-v0.1.0-beta.2-windows-x64.zip
+          body: 'UI layout fix: replay button fills all remaining width, while the seconds input and Save Replay button stay compact in both states. OBS 31.0.2 / Qt 6.6.3.'
+          files: obs-replay-duration-inline-v0.1.0-beta.3-windows-x64.zip
           fail_on_unmatched_files: true
