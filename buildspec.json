@@ -38,7 +38,7 @@
   },
   "name": "obs-replay-duration-inline",
   "displayName": "OBS Replay Duration Inline",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "author": "Danil",
   "website": "https://github.com/dmbai009/obs-replay-duration-inline",
   "email": ""
