@@ -12,7 +12,7 @@ The suffix `s` is fixed text. Only the numeric field is editable. No separate do
 
 ## Install
 
-1. Download the ZIP from [Releases](https://github.com/dmbai009/obs-replay-duration-inline/releases).
+1. Download the **v0.1.0-beta.2** ZIP from [Releases](https://github.com/dmbai009/obs-replay-duration-inline/releases).
 2. Exit OBS Studio completely.
 3. Unzip the `obs-plugins` folder into your OBS Studio installation, usually `C:\Program Files\obs-studio\`.
 4. Check that the DLL is at `C:\Program Files\obs-studio\obs-plugins\64bit\obs-replay-duration-inline.dll`.
@@ -21,7 +21,7 @@ The suffix `s` is fixed text. Only the numeric field is editable. No separate do
 To uninstall, close OBS and remove only this DLL.
 
 > [!WARNING]
-> Experimental beta for OBS Studio **31.x Windows x64**. Compiled using OBS 31.1.1 development headers and **not yet verified on OBS 31.0.2**. Back up your profile before testing.
+> Experimental beta for OBS Studio **31.x Windows x64**. Compiled using OBS 31.0.2 development headers and **not yet verified on OBS 31.0.2**. Back up your profile before testing.
 
 ## Behavior
 
@@ -44,3 +44,7 @@ The plugin integrates using OBS 31.x internal Qt object names (`controlsDock`, `
 ## License
 
 MIT, see [LICENSE](LICENSE).
+
+### v0.1.0-beta.2
+
+Rebuilt with the **exact OBS 31.0.2 build dependencies** (including Qt) after OBS logs reported `obs-replay-duration-inline.dll not loaded` for beta.1. This is a loader compatibility fix; actual runtime still needs user testing.

@@ -62,7 +62,7 @@ class Inline : public QObject {
         edit->setText(QString::number(seconds()));
         line->addWidget(edit);
         line->addWidget(new QLabel("s", widget));
-        layout->addWidget(widget);
+        layout->insertWidget(1, widget);
         holder = widget;
         field = edit;
         replayButton = button;
@@ -144,6 +144,7 @@ Inline *instance = nullptr;
 void eventCb(obs_frontend_event e, void *data) { static_cast<Inline *>(data)->onEvent(e); }
 }
 bool obs_module_load(void) {
+    blog(LOG_INFO, "[replay-duration-inline] Loaded with Qt %s", qVersion());
     instance = new Inline;
     obs_frontend_add_event_callback(eventCb, instance);
     return true;
