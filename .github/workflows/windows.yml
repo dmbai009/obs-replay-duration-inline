@@ -51,7 +51,7 @@ jobs:
           path: obs-replay-duration-inline-v1.0.0-windows-x64.zip
           if-no-files-found: error
       - name: Publish stable release
-        if: ${{ github.event_name == 'push' && github.event.head_commit.message == 'release: v1.0.0' }}
+        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'release: v1.0.0' }}"
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0.0
