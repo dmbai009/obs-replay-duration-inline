@@ -1,0 +1,56 @@
+name: Build Windows x64 beta
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: obsproject/obs-plugintemplate
+          ref: 3e7d7ac3b5342cd7d9b88890b9c70b472d1520fc
+          path: .obs-build-template
+      - name: Prepare sources
+        shell: pwsh
+        run: |
+          Copy-Item CMakeLists.txt .obs-build-template/CMakeLists.txt -Force
+          Copy-Item buildspec.json .obs-build-template/buildspec.json -Force
+          Copy-Item src/plugin-main.cpp .obs-build-template/src/plugin-main.cpp -Force
+      - name: Configure and build
+        shell: pwsh
+        working-directory: .obs-build-template
+        run: |
+          cmake --preset windows-ci-x64 -DENABLE_FRONTEND_API:BOOL=ON -DENABLE_QT:BOOL=ON
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake --build --preset windows-x64 --config Release --parallel
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Package DLL
+        shell: pwsh
+        run: |
+          $dll = '.obs-build-template/build_x64/Release/obs-replay-duration-inline.dll'
+          if (-not (Test-Path $dll)) { throw 'Missing compiled plugin DLL' }
+          New-Item -ItemType Directory -Force dist/obs-plugins/64bit | Out-Null
+          Copy-Item $dll dist/obs-plugins/64bit/obs-replay-duration-inline.dll
+          Copy-Item LICENSE dist/LICENSE.txt
+          Compress-Archive -Path dist/* -DestinationPath obs-replay-duration-inline-v0.1.0-beta.1-windows-x64.zip -Force
+      - uses: actions/upload-artifact@v4
+        with:
+          name: obs-replay-duration-inline-windows-x64
+          path: obs-replay-duration-inline-v0.1.0-beta.1-windows-x64.zip
+          if-no-files-found: error
+      - name: Publish beta
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v0.1.0-beta.1
+          target_commitish: main
+          name: OBS Replay Duration Inline v0.1.0-beta.1
+          prerelease: true
+          make_latest: false
+          body: Experimental OBS 31.x Windows x64 beta; test before using on streams.
+          files: obs-replay-duration-inline-v0.1.0-beta.1-windows-x64.zip
+          fail_on_unmatched_files: true
