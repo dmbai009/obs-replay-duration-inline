@@ -58,3 +58,5 @@ The native Replay Buffer button now stretches to occupy unused horizontal space;
 ### v1.0.0
 
 First stable release using the tested beta.3 plugin implementation, without changes to runtime logic. Verified on OBS 31.0.2 Windows x64: 30-second and 60-second replay saves, full-width layout and native Save Replay button, locked duration input while buffering, and settings persisting across restarts.
+
+The v1.0.0 release is built and packaged by the Windows GitHub Actions workflow.
