@@ -1,0 +1,7 @@
+build/
+build_*/
+.obs-build-template/
+*.dll
+*.pdb
+*.zip
+.vs/
